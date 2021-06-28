@@ -1,0 +1,16 @@
+demand table API(columns)
+        "id":1,			int
+        "customerId":1,		int
+        "productId":1		int
+customer table API(columns)
+	"name":"",		string
+        "surname":"",		string
+        "address":"",		string
+        "id":1,			int
+        "phone":11002		int
+product table API(columns)
+        "name":"",		string
+        "code":"",		string	
+        "supplier":"",		string
+        "id":1			int
+

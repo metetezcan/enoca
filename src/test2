@@ -1,0 +1,148 @@
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Questionnaire {
+	private ArrayList<Questions> questions = new ArrayList<Questions>();
+	private LocalDate startDate;
+	private LocalDate endDate;
+	private String name;
+
+	private int questionNumber;
+	private final int QuestionLimit = 5;
+
+	public Questionnaire(String name, LocalDate startDate, LocalDate endDate) throws Exception {
+		if (!name.isEmpty()) {
+			if (startDate.compareTo(endDate) <= 0) {
+				this.name = name;
+				this.startDate = startDate;
+				this.endDate = endDate;
+			} else
+				throw new java.lang.Exception("EndDate is supposed to be later than start date");
+		} else
+			throw new java.lang.Exception("Name of survey is empty");
+	}
+
+	public int getQuestionsSize() {
+		if (questions != null) {
+			return questions.size();
+		} else
+			return 0;
+	}
+
+	public ArrayList<Questions> getQuestions() {
+		return questions;
+	}
+
+	public void setQuestions(ArrayList<Questions> questions) {
+		this.questions = questions;
+	}
+
+	public LocalDate getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(LocalDate startDate) {
+		this.startDate = startDate;
+	}
+
+	public LocalDate getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getQuestionNumber() {
+		return questionNumber;
+	}
+
+	public void setQuestionNumber(int questionNumber) throws Exception {
+		if (questionNumber > 0 && questionNumber <= this.QuestionLimit)
+			this.questionNumber = questionNumber;
+		else
+			throw new Exception("You are allowed to enter questions between 1 and 5");
+	}
+
+	public void addQuestions(Questions question) throws Exception {
+		if (this.getQuestionsSize() < this.QuestionLimit)
+			this.questions.add(question);
+		else
+			throw new Exception("Question number exceeded");
+	}
+
+	public void welcomePage() {
+		System.out.println("This is a sample questionnaire. How many questions will you prepare for survey");
+		Scanner input = new Scanner(System.in);
+		try {
+			this.setQuestionNumber(Integer.parseInt(input.nextLine()));
+			for (Integer iterator = 1; iterator <= this.getQuestionNumber(); ++iterator) {
+				Questions temporary = new Questions();
+				System.out.println(iterator + ". question type? text or multiple");
+				String questionType = input.nextLine();
+				temporary.setQuestionType(questionType);
+				System.out.println("Please enter your " + iterator + ".question");
+				temporary.setQuestion(input.nextLine());
+				if (questionType.compareTo(QuestionType.MULTIPLE.toString().toLowerCase()) == 0) {
+					System.out.println("Please enter number of choices:");
+					Integer choiceNumber = Integer.parseInt(input.nextLine());
+					temporary.setChoiceNumber(choiceNumber);
+
+					for (Integer iterator2 = 1; iterator2 <= choiceNumber; ++iterator2) {
+						System.out.println("Please enter your " + iterator2 + ".choice");
+						String choice = input.nextLine();
+						temporary.addChoices(choice);
+					}
+				}
+				this.addQuestions(temporary);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			input.close();
+		}
+	}
+
+	public void shareQuestionnaire() throws Exception {
+		if (this.getQuestionsSize() >= 2)
+		{
+			if(this.getStartDate().compareTo(LocalDate.now()) <= 0 &&
+			   this.getEndDate().compareTo(LocalDate.now()) >= 0) {
+				int questionNo = 1;
+				System.out.println(this.getName());
+				for (Questions question : this.getQuestions()) {
+					System.out.print(questionNo + "-");
+					question.printQuestion();
+					++questionNo;
+				}
+			}
+			else
+				throw new Exception("Survey Date is supposed to be between start date and end date");
+		}
+		else
+			throw new Exception("Question number is supposed to be more than 1 in order to share");
+	}
+
+	public static void main(String args[]) {
+		try {
+			// Questionnaire quest = new Questionnaire("anket1", LocalDate.now(),
+			// LocalDate.of(2020, 4, 1));
+			Questionnaire quest = new Questionnaire("anket2", LocalDate.now(), LocalDate.of(2020, 6, 1));
+			quest.welcomePage();
+			quest.shareQuestionnaire();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+}
